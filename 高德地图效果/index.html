@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高德地图应用</title>
+    <!-- 引入拆分后的CSS文件 -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/search.css">
+    <link rel="stylesheet" href="css/route.css">
+    <link rel="stylesheet" href="css/track.css">
+    <link rel="stylesheet" href="css/map.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>高德地图应用</h1>
+            <button id="help-btn" class="help-button" title="查看功能说明文档">
+                <span class="help-icon">📖</span>
+                <span class="help-text">功能说明文档</span>
+            </button>
+        </header>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="keyword" placeholder="请输入搜索关键词">
+                <button id="search-btn">搜索</button>
+            </div>
+            <div class="search-options">
+                <label><input type="radio" name="search-type" value="poi" checked><span>POI搜索</span></label>
+                <label><input type="radio" name="search-type" value="around"><span>周边搜索</span></label>
+            </div>
+        </div>
+        
+        <div class="route-container">
+            <div class="route-box">
+                <h3>路线规划</h3>
+                <div class="route-inputs">
+                    <div class="input-group">
+                        <input type="text" id="start-point" placeholder="起点">
+                        <button id="current-location-btn" title="使用当前位置">📍</button>
+                    </div>
+                    <button id="swap-btn" title="交换起终点">⇅</button>
+                    <div class="input-group">
+                        <input type="text" id="end-point" placeholder="终点">
+                    </div>
+                </div>
+                <div class="transport-options">
+                    <button id="driving-btn" class="active">驾车</button>
+                    <button id="walking-btn">步行</button>
+                    <button id="transit-btn">公交</button>
+                    <button id="riding-btn">骑行</button>
+                </div>
+                <button id="route-btn">规划路线</button>
+            </div>
+        </div>
+        
+        <div class="track-container">
+            <div class="track-box">
+                <h3>轨迹功能</h3>
+                <div class="track-controls">
+                    <button id="start-track-btn">开始记录轨迹</button>
+                    <button id="stop-track-btn" disabled>停止记录</button>
+                    <button id="clear-track-btn">清除轨迹</button>
+                    <button id="save-track-btn" disabled>保存轨迹</button>
+                    <button id="load-track-btn">加载轨迹</button>
+                    <button id="demo-track-btn">加载预设轨迹</button>
+                </div>
+                <div class="track-animation-controls">
+                    <h4>轨迹动画控制</h4>
+                    <div class="animation-buttons">
+                        <button id="play-track-btn" disabled>播放动画</button>
+                        <button id="pause-track-btn" disabled>暂停动画</button>
+                        <button id="stop-animation-btn" disabled>停止动画</button>
+                    </div>
+                </div>
+                <div class="track-info">
+                    <span id="track-status">未开始记录</span>
+                    <span id="track-distance">距离: 0 km</span>
+                    <span id="track-time">时间: 00:00:00</span>
+                </div>
+                <input type="file" id="track-file-input" accept=".json" style="display: none;">
+            </div>
+        </div>
+        
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="panel-header">
+                <h3>信息面板</h3>
+                <button id="close-panel">×</button>
+            </div>
+            <div id="panel-content"></div>
+        </div>
+        
+        <!-- 功能说明文档悬浮窗口 -->
+        <div id="help-modal" class="help-modal">
+            <div class="help-modal-content">
+                <div class="help-modal-header">
+                    <h2>📖 功能说明文档</h2>
+                    <button id="close-help-modal" class="close-help-btn">×</button>
+                </div>
+                <div class="help-modal-body">
+                    <iframe id="help-iframe" src="" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部学生信息区域 -->
+    <footer class="student-footer">
+        <div class="footer-content">
+            <div class="student-info">
+                <span class="project-title">陈冠衡暑期调研结课作业</span>
+                <span class="student-id">学号：202322451002</span>
+            </div>
+            <div class="footer-decoration">
+                <div class="decoration-line"></div>
+                <div class="decoration-dot"></div>
+                <div class="decoration-line"></div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Canvas性能优化脚本 - 必须在高德地图API之前加载 -->
+    <script src="js/canvas-optimizer.js"></script>
+    
+    <!-- 高德地图API安全密钥配置 -->
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode: "045a4882fc3282b9bf01d689b11a06d7"
+        };
+        
+        // 防止Chrome扩展通信错误
+        window.addEventListener('error', function(e) {
+            if (e.message && e.message.includes('Extension context invalidated')) {
+                console.warn('Chrome扩展上下文失效，忽略此错误');
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // 捕获未处理的Promise拒绝
+        window.addEventListener('unhandledrejection', function(e) {
+            if (e.reason && e.reason.message && e.reason.message.includes('message port closed')) {
+                console.warn('消息端口关闭错误，忽略此错误');
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+    
+    <!-- 高德地图API -->
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=cc888f3fbd2b5c82cb3b842d8277c241"></script>
+    <script type="text/javascript" src="https://webapi.amap.com/ui/1.1/main.js"></script>
+    
+    <!-- 引入拆分后的JS模块文件 -->
+    <script src="js/utils.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/route.js"></script>
+    <script src="js/track.js"></script>
+    <script src="js/help-modal.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

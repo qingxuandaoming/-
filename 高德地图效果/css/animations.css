@@ -1,0 +1,216 @@
+/* 动画效果和装饰样式 */
+
+/* 页面加载动画 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 应用动画到各个容器 */
+header {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.search-container {
+    animation: fadeInLeft 0.8s ease-out 0.2s both;
+}
+
+.route-container {
+    animation: fadeInRight 0.8s ease-out 0.4s both;
+}
+
+.track-container {
+    animation: fadeInLeft 0.8s ease-out 0.6s both;
+}
+
+.map-container {
+    animation: fadeInUp 0.8s ease-out 0.8s both;
+}
+
+.student-footer {
+    animation: fadeInUp 0.8s ease-out 1s both;
+}
+
+/* 背景装饰动画 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+    z-index: -1;
+    animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(180deg);
+    }
+}
+
+/* 浮动粒子效果 */
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.2), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.4), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(2px 2px at 160px 30px, rgba(255, 255, 255, 0.2), transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: sparkle 15s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes sparkle {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-100px);
+    }
+}
+
+/* 按钮点击波纹效果 */
+.btn, .track-controls button, .transport-options button, #search-btn, #route-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after, .track-controls button::after, .transport-options button::after, 
+#search-btn::after, #route-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::after, .track-controls button:active::after, .transport-options button:active::after,
+#search-btn:active::after, #route-btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 记录状态指示器动画 */
+.track-status-indicator.recording {
+    animation: pulse 1.5s infinite;
+}
+
+/* 悬浮效果增强 */
+.panel:hover, .search-container:hover, .route-container:hover, 
+.track-container:hover, .map-container:hover {
+    transform: translateY(-3px);
+}
+
+/* 加载状态动画 */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 渐变文字动画 */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+header h1 {
+    background: linear-gradient(-45deg, #ffffff, #e3f2fd, #bbdefb, #90caf9);
+    background-size: 400% 400%;
+    animation: gradientShift 3s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 响应式动画调整 */
+@media (max-width: 768px) {
+    .search-container, .route-container, .track-container, .map-container {
+        animation-delay: 0s;
+    }
+    
+    .container::before {
+        background-size: 150px 75px;
+    }
+}
+
+/* 减少动画效果（用户偏好） */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
